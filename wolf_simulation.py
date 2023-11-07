@@ -37,13 +37,6 @@ class color:
     reset = "\033[0m"
 
 ##############      DEF      #############
-
-
-        
-
-
-    
-
 def voting():
     if hide_gameMsg != "true":
         print("投票開始")
@@ -203,7 +196,6 @@ def voting():
                 print("決選投票")
             voter = []
             vote_counter = vote_counter + 1
-
 
     for i in range(len(last_executioner)):
         if hide_gameMsg != "true":
