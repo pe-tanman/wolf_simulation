@@ -130,7 +130,8 @@ def voting():
             print("投票数:",collections.Counter(voter))
         if len(last_executioner) == 1:
             voter = []
-            if playerrole[last_executioner[0]] == "占い師":
+            if playerrole[last_executioner[0]] == "占い師":#占い師が処刑されそうになったときは、COして投票やり直し
+               #投票リセット
                 voter = []
                 if hide_gameMsg != "true":
                     print(color.fortune_teller + "",last_executioner[0],": CO 占い師" + color.reset)
@@ -139,15 +140,19 @@ def voting():
                 ft_CO = "success"
                 if last_executioner[0] not in white_list:
                     white_list.append(last_executioner[0])
-                CO_player = last_executioner[0]
-                vote_counter = 0
+
+                CO_player = last_executioner[0]#COしたひと
+                vote_counter = 0 
                 for i in range(member):
                     if player_status[i] == 1:
                         can_vote.append(i)
-            elif ft_act_pattern == 1 and player_status[divination_result[0]] == 1 and last_executioner[0] == divination_result[1] and divination_result[2] == "白":
+            
+            
+            elif ft_act_pattern == 1 and player_status[divination_result[0]] == 1 and last_executioner[0] == divination_result[1] and divination_result[2] == "白":#白が処刑されそうなとき
                 voter = []
                 if hide_gameMsg != "true":
                     print(color.fortune_teller + "",divination_result[0],": CO 占い師",divination_result[1],"→",divination_result[2],"" + color.reset)
+                #占いがCO
                 if last_executioner[0] not in wolf_kill_later:
                     wolf_kill_later.append(divination_result[1])
                 if divination_result[0] not in wolf_kill_later:
@@ -157,15 +162,16 @@ def voting():
                     white_list.append(divination_result[1])
                 if divination_result[0] not in white_list:
                     white_list.append(divination_result[0])
+                #投票リセット
                 CO_player = last_executioner[0]
                 vote_counter = 0
                 for i in range(member):
                     if player_status[i] == 1:
                         can_vote.append(i)
             else:
-
+                #処刑される人が決定
                 break
-        elif len(last_executioner) == 2 and divination_result[0] in last_executioner and divination_result[1] in last_executioner and divination_result[2] == "白":
+        elif len(last_executioner) == 2 and divination_result[0] in last_executioner and divination_result[1] in last_executioner and divination_result[2] == "白":#白確が決選投票のなかにはいっているとき
             voter = []
             if hide_gameMsg != "true":
                 print(color.fortune_teller + "",divination_result[0],": CO 占い師",divination_result[1],"→",divination_result[2],"" + color.reset)
@@ -183,10 +189,10 @@ def voting():
             for i in range(member):
                 if player_status[i] == 1:
                     can_vote.append(i)
-        elif vote_counter >= 3:
+        elif vote_counter >= 3:#vote_counterとは？
             voter = []
             break
-        else:
+        else:#決選投票
             if hide_gameMsg != "true":
                 print(last_executioner)
             can_vote=[]
@@ -197,6 +203,8 @@ def voting():
             voter = []
             vote_counter = vote_counter + 1
 
+
+#処刑
     for i in range(len(last_executioner)):
         if hide_gameMsg != "true":
             print(player[last_executioner[i]],"が処刑された。")
@@ -208,7 +216,8 @@ def voting():
         if player_status[i] == 1:
             can_vote.append(i)
 
-    victory_dic()
+    victory_dic()#=victory_decision()
+    #リセット
     ft_CO = ""
     ft_guess = ""
     can_vote=[]
@@ -221,41 +230,38 @@ def wolf_act():
     global survivor
     global wolf_alive
     global wolf_kill_dicide
-    for i in range(wolf_alive):
-        if len(wolf_kill_later) >= 1:
+
+    for i in range(wolf_alive):#それぞれの狼で
+        if len(wolf_kill_later) >= 1:#wolf_kill_laterもリスト
             for ii in range(len(wolf_kill_later)):
-                if wolf_kill_dicide == 0:
+                if wolf_kill_dicide == 0:#wold_kill_decide...wolfが殺す先が決定,true|false
                     if playerrole[wolf_kill_later[ii]] == "占い師" and wolf_kill_dicide == 0:
-                        wolf_kill = wolf_kill_later[ii]
+                        wolf_kill = wolf_kill_later[ii]#wolfが殺すのが確定
                         wolf_kill_later.remove(wolf_kill_later[ii])
                         wolf_kill_dicide = 1
-            for ii in range(len(wolf_kill_later)):
-                if wolf_kill_dicide == 0:
                     if playerrole[wolf_kill_later[ii]] == "霊媒師" and wolf_kill_dicide == 0:
                         wolf_kill = wolf_kill_later[ii]
                         wolf_kill_later.remove(wolf_kill_later[ii])
                         wolf_kill_dicide = 1
-            for ii in range(len(wolf_kill_later)):
-                if wolf_kill_dicide == 0:
                     if playerrole[wolf_kill_later[ii]] == "狩人":
                         wolf_kill = wolf_kill_later[ii]
                         wolf_kill_later.remove(wolf_kill_later[ii])
                         wolf_kill_dicide = 1
-            for ii in range(len(wolf_kill_later)):
-                if wolf_kill_dicide == 0:
                     if playerrole[wolf_kill_later[ii]] == "市民":
                         wolf_kill = wolf_kill_later[ii]
                         wolf_kill_later.remove(wolf_kill_later[ii])
                         wolf_kill_dicide = 1
+           
 
-            player_status[wolf_kill] = 0
+            player_status[wolf_kill] = 0#それぞれの狼が殺してる
             survivor.remove(wolf_kill)
-            killed_player_by_wolf.append(wolf_kill)
+            killed_player_by_wolf.append(wolf_kill)#霊媒使用
             wolf_kill_dicide = 0
-            if wolf_kill in can_divine:
+            if wolf_kill in can_divine:#devine占いとして使ってる？
                 can_divine.remove(wolf_kill)
         else:
             while True:
+                #殺す先を決める
                 wolf_kill = random.randint(0,member-1)
                 if playerrole[wolf_kill] != "人狼" and player_status[wolf_kill] == 1:
                     player_status[wolf_kill] = 0
@@ -281,6 +287,8 @@ def fortune_teller_act():
             n = random.randint(0,len(can_divine)-1)   #占い先をリスト[can_divine]からランダムに決定
             be_divined = can_divine[n]
             divination_result[1] = be_divined
+
+            #占い結果
             if playerrole[be_divined] == "人狼":
                 divination_result[2] = "黒"
             else:
@@ -292,7 +300,7 @@ def fortune_teller_act():
 
 
 
-def victory_dic():
+def victory_dic():#勝利判定
     global wolf_alive
     global innocent_alive
     global game_condition
@@ -300,10 +308,13 @@ def victory_dic():
     global innocent_win
     global villager_alive
     global fortune_teller_alive
+
     wolf_alive = 0
     innocent_alive = 0
     villager_alive = 0
     fortune_teller_alive = 0
+
+    #生存数の確認
     for i in range(member):
         if playerrole[i] == "人狼":
             if player_status[i] == 1:
@@ -317,6 +328,7 @@ def victory_dic():
                 innocent_alive = innocent_alive + 1
                 fortune_teller_alive = fortune_teller_alive + 1
 
+    #勝利判定  
     if hide_gameMsg != "true":
         print("生存:",survivor)
     if wolf_alive == 0:
