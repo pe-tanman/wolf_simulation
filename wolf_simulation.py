@@ -423,19 +423,24 @@ for z in range(playtime):
 
 
     while game_condition == 1:
+        #夜の行動
         if hide_gameMsg != "true":
             print(day,"日目夜")
         if number_of_fortune_teller >= 1:
             fortune_teller_act()
         wolf_act()
+        #昼
         day = day + 1
         if hide_gameMsg != "true":
             print(day,"日目昼")
         for i in range(len(killed_player_by_wolf)):
             if hide_gameMsg != "true":
                 print(player[killed_player_by_wolf[i]],"が人狼の襲撃に逢いました。")
+
         killed_player_by_wolf = []
         victory_dic()
+
+        #co
         if game_condition == 0:
             break
         if divination_result[2] == "黒" and player_status[divination_result[0]] == 1:
@@ -448,6 +453,7 @@ for z in range(playtime):
                 wolf_kill_later.append(divination_result[0])
             if divination_result[0] not in white_list:
                 white_list.append(divination_result[0])
+        #投票
         voting()
 
 
